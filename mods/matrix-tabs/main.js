@@ -5,7 +5,7 @@
 // Frank Lin), itself from Herdr's tabs mod.
 import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, run, openOverlay, theme, window, shared, layout, settings } from "herdr";
+import { spaces, panes, run, openOverlay, theme, window, shared, layout, settings, appHome, readTextFile } from "herdr";
 
 const SPIN = ["ｦ", "ｱ", "ｳ", "ｴ", "ｵ", "ｶ", "ｷ", "ｸ"];
 
@@ -19,7 +19,9 @@ function find(node, id) {
 }
 
 export default class Tabs extends View {
-  init() {
+  init(_props, cx) {
+    // The Workflows button opens a `workflows` mod, so it shows only once one is installed in the Herdr home.
+    cx.spawn(async (cx) => { this.workflows = (await readTextFile(`${appHome()}/mods/workflows/mod.json`).catch(() => null)) !== null; cx.notify(); });
     this.pressed = null;
     this.panels = JSON.parse(localStorage.getItem("panels") ?? "{}");
   }
@@ -102,6 +104,7 @@ export default class Tabs extends View {
       .child(div().flex_none().text_size(11).text_color(t.dim).child(`${space?.machine ?? "local"}:~$`))
       .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().gap(0).overflow_x_scrollbar().children(shown.map(item)))
       .child(bracket("tab-new", "[+]", false, () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
+      .when(Boolean(this.workflows), (el) => el.child(bracket("workflows", "[workflows]", false, () => run("mod.open", { name: "workflows" }))))
       .when(enabled.includes("files"), (el) => el.child(panelButton("files")))
       .when(enabled.includes("changes"), (el) => el.child(panelButton("changes")))
       .when(w?.buttons, (el) => el.child(bracket("minimize", "_", false, () => run("window.minimize")))
