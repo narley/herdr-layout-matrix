@@ -80,10 +80,6 @@
       },
       "min": 44,
       "max": 480,
-      "background": {
-        "image": "mods/matrix-chrome/rain-sidebar.png",
-        "fit": "cover"
-      },
       "resizable": false
     },
     {
