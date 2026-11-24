@@ -202,5 +202,8 @@
   "terminal_opacity": 0.74,
   "font": "JetBrains Mono",
   "ui_font": "JetBrains Mono",
-  "preview": "layouts/matrix.png"
+  "preview": "layouts/matrix.png",
+  "link_handlers": [
+    "code-peek"
+  ]
 }
